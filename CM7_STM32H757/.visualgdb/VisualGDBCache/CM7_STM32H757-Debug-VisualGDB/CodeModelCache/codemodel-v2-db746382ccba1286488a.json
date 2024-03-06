@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-DEBUG-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "DEBUG",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "CM7_STM32H757",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "BSP::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-BSP-DEBUG-42c605f82a8d822cd728.json",
+					"name" : "BSP",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "CM7_STM32H757::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CM7_STM32H757-DEBUG-7e184f9e44fc14d6c9b6.json",
+					"name" : "CM7_STM32H757",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "CM7_STM32H757-bin::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-CM7_STM32H757-bin-DEBUG-16368ab8617ec2b9f305.json",
+					"name" : "CM7_STM32H757-bin",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/build/VisualGDB/Debug",
+		"source" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}
