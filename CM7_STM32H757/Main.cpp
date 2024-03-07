@@ -18,15 +18,24 @@ hwGPIO Led(GPIOJ, 10, hwGPIO::eMode::Output, hwGPIO::ePP::PushPull);
 
 __RAMFUNC void SomeITCMFunc(int param)
 {
-	assert((int)&SomeITCMFunc >= ITCMRAM_START && (int)&SomeITCMFunc <= (ITCMRAM_START + ITCMRAM_LENGTH) && "Its not in ITCM area");
+	assert((int)&SomeITCMFunc >= ITCMRAM_START && (int)&SomeITCMFunc < (ITCMRAM_END) && "Its not in ITCM area");
 	Printf("SomeITCMFunc address 0x%08X param %d \n", &SomeITCMFunc, param);
+}
+
+__RAMFUNC void ToggleLed()
+{
+	assert((int)&ToggleLed >= ITCMRAM_START && (int)&ToggleLed < (ITCMRAM_END) && "Its not in ITCM area");
+	Led.Toggle();
+	Printf("Led %s\n", Led.IsOn() ? "On" : "Off");
 }
 
 int main()
 {
+	DumpChipInfo();
+	
 	SomeITCMFunc(10);
 	
-	hwSysTick::Init(1, 1000); // Start systick
+	hwSysTick::Init(); // Start systick
 	//hwSysTick::UnitTest();
 
 //	hwSysClock::DumpClocks();
@@ -45,8 +54,8 @@ int main()
 
 	hwSysClock::SystemCoreClockUpdate();
 	
-	hwSysTick::Init(1, 1000); // Start systick, with new clocks
-	hwSysTick::UnitTest();
+	hwSysTick::Init(); // Start systick, with new clocks
+	//hwSysTick::UnitTest();
 	
 	Printf("HW Init done CM7\n");
 	
@@ -63,8 +72,8 @@ int main()
 	Printf("Running %lu\n", var);
 	while (1)
 	{
-		Led.Toggle();
-		hwSysTick::Delay(1000);
+		ToggleLed();
+		osDelay(1000);
 		var++;
 	}
 }

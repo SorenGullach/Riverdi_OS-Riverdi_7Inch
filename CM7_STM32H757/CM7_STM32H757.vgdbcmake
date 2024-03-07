@@ -182,7 +182,7 @@
     <EndOfStackSymbol>_estack</EndOfStackSymbol>
     <TimestampProviderTicksPerSecond>0</TimestampProviderTicksPerSecond>
     <KeepConsoleAfterExit>false</KeepConsoleAfterExit>
-    <UnusedStackFillPattern xsi:nil="true" />
+    <UnusedStackFillPattern>2779096485</UnusedStackFillPattern>
     <CheckInterfaceDrivers>true</CheckInterfaceDrivers>
   </Debug>
 </VisualGDBProjectSettings2>
