@@ -1,7 +1,7 @@
 Hi this is a start of an OS for the Riverdi 7" stm32H757 displays.
 The SysTick and Clock setup works :-)
 Some of the intercomunication is in place.
-Some of the Power controll is working.
+Some of the Power control is working.
 A new linker file is also made.
 The rest is stil to come :-|
 
