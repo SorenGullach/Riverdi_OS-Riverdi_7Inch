@@ -50,7 +50,6 @@ class hwCC
 
 	uint32_t SYS_clk, LSI_clk, LSE_clk, RTC_clk, HSE_1M_clk, HSE_clk, HSI_clk, CSI_clk, HSI48_clk, PER_clk;
 	
-#pragma region MCO_Outputs
 	// As shown in the Figure 51, the RCC offers 2 clock outputs(MCO1 and MCO2), with a great
 	// flexibility on the clock selection and frequency adjustment.
 	enum class eMCOSEL
@@ -83,9 +82,7 @@ class hwCC
 			return &MCOPin;
 		}
 		*/
-#pragma endregion
 
-#pragma region RCC_clock_block
 	enum class eHSE
 	{
 		Off,
@@ -140,8 +137,6 @@ class hwCC
 	*/
 	void LSI(bool on);
 
-#pragma endregion
-
 	enum class ePLL_SRC
 	{
 		None,
@@ -178,7 +173,7 @@ class hwCC
 				uint32_t on = (((Idx == 1) * RCC_CR_PLL1ON) | ((Idx == 2) * RCC_CR_PLL2ON) | ((Idx == 3) * RCC_CR_PLL3ON));
 				RCC->CR |= on; // Enable PLL
 				uint32_t ready = (((Idx == 1) * RCC_CR_PLL1RDY) | ((Idx == 2) * RCC_CR_PLL2RDY) | ((Idx == 3) * RCC_CR_PLL3RDY));
-				while ((RCC->CR & ready) == 0) ;
+				while ((RCC->CR & ready) == 0) __asm(""); 
 			}
 
 			/*
@@ -232,12 +227,12 @@ class hwCC
 			P_8,
 			P_16,
 		};
-		void P1Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P2Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P3Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P4Clk(ePDivisor pDivisor = ePDivisor::P_1);
+		void P1Clk(ePDivisor pDivisor = ePDivisor::P_2, bool setTimerBit = false);
+		void P2Clk(ePDivisor pDivisor = ePDivisor::P_2, bool HRTIMSEL = false);
+		void P3Clk(ePDivisor pDivisor = ePDivisor::P_2);
+		void P4Clk(ePDivisor pDivisor = ePDivisor::P_2);
 		
-		uint32_t C1_clk, C2_clk, P3_clk, P1_clk, P2_clk, P4_clk;
+		uint32_t C1_clk, C2_clk, P3_clk, P1_clk, P2_clk, P4_clk, P1T_clk, P2T_clk, P2HRT_clk;
 	};
 	
 	static hwSCGU SCGU;
@@ -250,9 +245,9 @@ public:
 	// Dumps the current settings
 	static void DumpClocks()
 	{
-		Printf("UniTest of SysClock start\n");
+		Printf("UnitTest of SysClock start\n");
 		CC.DumpClocks();
-		Printf("UniTest of SysClock end\n");
+		Printf("UnitTest of SysClock end\n");
 	}
 	// Find the clocks
 	static void SystemCoreClockUpdate()
@@ -278,8 +273,10 @@ public:
 	static uint32_t AHB3Clk();
 	// Returns the APB1Clk
 	static uint32_t APB1Clk();
+	static uint32_t APB1TClk();
 	// Returns the APB2Clk
 	static uint32_t APB2Clk();
+	static uint32_t APB2TClk();
 	// Returns the APB3Clk
 	static uint32_t APB3Clk();
 	// Returns the APB4Clk

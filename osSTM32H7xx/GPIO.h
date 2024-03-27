@@ -2,7 +2,7 @@
 #include <assert.h>
 
 #include "stm32h7xx.h"
-#include <Utils.h>
+#include <Registers.h>
 
 class hwGPIO
 {
@@ -39,22 +39,24 @@ public:
 	{
 	}
 	// Make GPIO Pin initialized elsewhere
-	hwGPIO(GPIO_TypeDef *pgpio, uint32_t pin)
+	hwGPIO(GPIO_TypeDef *pgpio, R_t<uint8_t, 0, 15>pin)
 	{
-		assert(pin >= 0 && pin <= 15);
 		assert(pgpio != nullptr); 
 		pGPIO = pgpio;
 		Pin = pin;
 	}
 	// Make GPIO pin initialized
-	hwGPIO(GPIO_TypeDef *pgpio, uint32_t pin, eMode mode, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
+	hwGPIO(GPIO_TypeDef *pgpio, R_t<uint8_t, 0, 15>pin, eMode mode, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
 	{
 		Init(pgpio, pin, mode, pp, pupd, speed);
 	}
-	void Init(GPIO_TypeDef *pgpio, uint32_t pin, eMode mode, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
+	hwGPIO(GPIO_TypeDef *pgpio, R_t<uint8_t, 0, 15>pin, R_t<uint8_t, 0, 15>af, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
+	{
+		Init(pgpio, pin, af, pp, pupd, speed);
+	}
+	void Init(GPIO_TypeDef *pgpio, R_t<uint8_t, 0, 15>pin, eMode mode, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
 	{
 		assert(pgpio != nullptr); 
-		assert(pin >= 0 && pin <= 15);
 		pGPIO = pgpio;
 		Pin = pin;
 		EnableClk();
@@ -63,15 +65,14 @@ public:
 		SetPuPD(pupd);
 		SetSpeed(speed);
 	}
-	void Init(GPIO_TypeDef *pgpio, uint32_t pin, uint8_t af, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
+	void Init(GPIO_TypeDef *pgpio, R_t<uint8_t, 0, 15>pin, R_t<uint8_t, 0, 15>af, ePP pp = ePP::Float, ePUPD pupd = ePUPD::None, eSpeed speed = eSpeed::High)
 	{
-		R_t<uint8_t, 0,15>AF(af);
 		assert(pgpio != nullptr); 
-		assert(pin >= 0 && pin <= 15);
+		assert(pin <= 15);
 		pGPIO = pgpio;
 		Pin = pin;
 		EnableClk();
-		SetMode(AF);
+		SetMode(af);
 		SetDriver(pp);
 		SetPuPD(pupd);
 		SetSpeed(speed);
@@ -94,7 +95,7 @@ public:
 	
 private:
 	GPIO_TypeDef *pGPIO = nullptr;
-	uint32_t Pin;
+	R_t<uint8_t, 0, 15>Pin = 0;
 	
 	void EnableClk()
 	{
@@ -126,42 +127,42 @@ private:
 			assert("Wrong port");
 	}
 
-	void SetMode(R_t<uint8_t,0,15>af)
+	void SetMode(R_t<uint8_t, 0, 15>af)
 	{
-		pGPIO->MODER &= ~(0b11 << 2*Pin); // 00
-		pGPIO->MODER |= (uint32_t)0b10 << 2*Pin; // AF
+		pGPIO->MODER &= ~(0b11UL << 2*Pin); // 00
+		pGPIO->MODER |= 0b10UL << 2*Pin; // AF
 		if (Pin < 8)
 		{
-			pGPIO->AFR[0] &= ~((uint32_t)0xF << 4*Pin);
+			pGPIO->AFR[0] &= ~(0xFUL << 4*Pin);
 			pGPIO->AFR[0] |= (uint32_t)af << 4*Pin;
 		}
 		else
 		{
-			pGPIO->AFR[1] &= ~((uint32_t)0xF << 4*(Pin-8));
+			pGPIO->AFR[1] &= ~(0xFUL << 4*(Pin - 8));
 			pGPIO->AFR[1] |= (uint32_t)af << 4*(Pin - 8);
 		}
 	}
 
 	void SetMode(eMode mode)
 	{
-		pGPIO->MODER &= ~(0b11 << 2*Pin); // 00
+		pGPIO->MODER &= ~(0b11UL << 2*Pin); // 00
 		pGPIO->MODER |= (uint32_t)mode << 2*Pin; 
 	}
 	void SetDriver(ePP pp)
 	{
 		if (pp == ePP::OpenDrian)
-			pGPIO->OTYPER |= 1 << Pin;
+			pGPIO->OTYPER |= 1UL << Pin;
 		else			
-			pGPIO->OTYPER &= ~(1 << Pin);
+			pGPIO->OTYPER &= ~(1UL << Pin);
 	}
 	void SetPuPD(ePUPD pupd)
 	{
-		pGPIO->PUPDR &= ~(0b11 << 2*Pin); // 00
+		pGPIO->PUPDR &= ~(0b11UL << 2*Pin); // 00
 		pGPIO->PUPDR |= (uint32_t)pupd << 2*Pin;
 	}
 	void SetSpeed(eSpeed speed)
 	{
-		pGPIO->OSPEEDR &= ~(0b11 << 2*Pin); // 00
+		pGPIO->OSPEEDR &= ~(0b11UL << 2*Pin); // 00
 		pGPIO->OSPEEDR |= (uint32_t)speed << 2*Pin; 
 	}
 };

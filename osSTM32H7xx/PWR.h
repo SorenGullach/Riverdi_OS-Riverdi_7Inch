@@ -3,6 +3,7 @@
 #include "stm32h7xx.h"
 #include <assert.h>
 #include <stdio.h>
+#include <Utils.h>
 
 // https://www.st.com/content/ccc/resource/training/technical/product_training/group0/97/f1/9d/3a/c4/c2/4c/ff/STM32H7-System-Power_control_PWR/files/STM32H7-System-Power_control_PWR.pdf/_jcr_content/translations/en.STM32H7-System-Power_control_PWR.pdf
 
@@ -152,6 +153,7 @@ public:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
 			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
 			PWR->CR1 = (PWR->CR1 & ~PWR_CR1_SVOS_Msk) | 0x2 << PWR_CR1_SVOS_Pos;
+			break;
 		case eVOSs::LP_SVOS5:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
 			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
