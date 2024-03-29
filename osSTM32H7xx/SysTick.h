@@ -16,3 +16,6 @@ public:
 	static uint32_t Ticks;
 };
 
+#define osDelay(ms) hwSysTick::Delay(ms)
+#define osTicks_ms hwSysTick::Ticks
+
