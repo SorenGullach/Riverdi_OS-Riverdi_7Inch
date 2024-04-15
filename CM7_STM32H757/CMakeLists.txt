@@ -6,10 +6,11 @@ find_bsp(
 	ID com.sysprogs.arm.stm32
 	VERSION 2024.01
 	MCU STM32H757XI
-	CONFIGURATION com.sysprogs.toolchainoptions.arm.syscallspecs=--specs=rdimon.specs
 	HWREGISTER_LIST_FILE STM32H7xxxx/DeviceDefinitions/stm32h757xx.xml
 	CXX_STANDARD 17
-	DISABLE_GNU_EXTENSIONS)
+	DISABLE_GNU_EXTENSIONS
+	FRAMEWORKS com.sysprogs.embedded.semihosting_and_profiler
+	FWCONFIGURATION com.sysprogs.efp.profiling.debugger_check=SYSPROGS_PROFILER_DEBUGGER_CHECK_MODE=1)
 
 bsp_include_directories(../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Core/Include ../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Device/ST/STM32H7xx/Include)
 add_bsp_based_executable(
@@ -30,6 +31,16 @@ add_bsp_based_executable(
 		../../osSTM32H7xx/SysTick.cpp
 		../../osSTM32H7xx/PWR.h
 		../../osSTM32H7xx/GPIO.h
+		../../osSTM32H7xx/LTDC.h
+		../../osSTM32H7xx/LTDC.cpp
+		../../osSTM32H7xx/DSI.h
+		../../osSTM32H7xx/DSI.cpp
+		TFTDisplay.h
+		../../osSTM32H7xx/Timers.h
+		../../osSTM32H7xx/Timers.cpp
+		TFT_Setup.h
+		../../osSTM32H7xx/FMC.cpp
+		../../osSTM32H7xx/FMC.h
 	LINKER_SCRIPT STM32H757XI_flash.lds)
 
 	target_include_directories(CM7_STM32H757 PRIVATE 

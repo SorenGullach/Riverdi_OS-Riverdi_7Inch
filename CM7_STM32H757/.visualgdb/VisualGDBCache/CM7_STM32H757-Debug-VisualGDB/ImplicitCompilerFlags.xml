@@ -2,11 +2,19 @@
 <ImplicitFlagCache xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <GCC>C:\SysGCC\arm-eabi\bin\arm-none-eabi-gcc.exe</GCC>
   <GXX>C:\SysGCC\arm-eabi\bin\arm-none-eabi-g++.exe</GXX>
+  <Toolchain>
+    <ID>com.visualgdb.arm-eabi</ID>
+    <Version>
+      <GCC>12.3.1</GCC>
+      <GDB>13.2</GDB>
+      <Revision>1</Revision>
+    </Version>
+  </Toolchain>
   <CachedFlags>
     <Entry>
       <Key>
         <IsCXX>false</IsCXX>
-        <Arguments> </Arguments>
+        <Arguments />
       </Key>
       <Specs>
         <RawIncludeDirs>
@@ -1600,7 +1608,7 @@
     <Entry>
       <Key>
         <IsCXX>true</IsCXX>
-        <Arguments> </Arguments>
+        <Arguments />
       </Key>
       <Specs>
         <RawIncludeDirs>
@@ -3433,7 +3441,7 @@
     <Entry>
       <Key>
         <IsCXX>false</IsCXX>
-        <Arguments> -mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
+        <Arguments>-mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
       </Key>
       <Specs>
         <RawIncludeDirs>
@@ -5122,7 +5130,7 @@
     <Entry>
       <Key>
         <IsCXX>true</IsCXX>
-        <Arguments> -std=c++17 -Wall -Wextra -mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
+        <Arguments>-std=c++17 -mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
       </Key>
       <Specs>
         <RawIncludeDirs>
@@ -7054,7 +7062,7 @@
     <Entry>
       <Key>
         <IsCXX>true</IsCXX>
-        <Arguments> -std=c++17 -mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
+        <Arguments>-std=c++17 -Wall -Wextra -mcpu=cortex-m7 -mthumb -mfloat-abi=hard</Arguments>
       </Key>
       <Specs>
         <RawIncludeDirs>

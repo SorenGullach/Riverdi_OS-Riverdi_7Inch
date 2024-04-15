@@ -1,0 +1,466 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "CMakeFiles/BSP_EFP_Profiler.dir/./C_/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/FastSemihosting.cpp.obj"
+		},
+		{
+			"path" : "CMakeFiles/BSP_EFP_Profiler.dir/./C_/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/InstrumentingProfiler.cpp.obj"
+		},
+		{
+			"path" : "CMakeFiles/BSP_EFP_Profiler.dir/./C_/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/TestResourceManager.cpp.obj"
+		},
+		{
+			"path" : "CMakeFiles/BSP_EFP_Profiler.dir/./C_/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/ProfilerRTOS_FreeRTOS.c.obj"
+		}
+	],
+	"backtrace" : 7,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"create_bsp_library",
+			"create_bsp_framework_library_from_vars",
+			"include",
+			"visualgdb_instantiate_external_frameworks",
+			"find_bsp",
+			"target_link_libraries",
+			"set_property",
+			"copy_property_if_not_defined"
+		],
+		"files" : 
+		[
+			"C:/Program Files (x86)/Sysprogs/VisualGDB/CMake/embedded/bsp.cmake",
+			"C:/Program Files (x86)/Sysprogs/VisualGDB/CMake/embedded/efp.cmake",
+			"C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/framework.cmake",
+			"C:/Users/45201/AppData/Local/VisualGDB/FindFrameworks.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 4
+			},
+			{
+				"command" : 5,
+				"file" : 4,
+				"line" : 5,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 390,
+				"parent" : 1
+			},
+			{
+				"command" : 3,
+				"file" : 3,
+				"line" : 6,
+				"parent" : 2
+			},
+			{
+				"file" : 2,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 2,
+				"line" : 116,
+				"parent" : 4
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 13,
+				"parent" : 5
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 43,
+				"parent" : 6
+			},
+			{
+				"command" : 6,
+				"file" : 1,
+				"line" : 37,
+				"parent" : 5
+			},
+			{
+				"command" : 8,
+				"file" : 0,
+				"line" : 402,
+				"parent" : 1
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 57,
+				"parent" : 9
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g3 -O0 -DDEBUG -std=c++17"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-fno-exceptions"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-fno-rtti"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mcpu=cortex-m7"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mthumb"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mfpu=fpv5-d16"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mfloat-abi=hard"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-ffunction-sections"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-fdata-sections"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-include"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/ProfilerFreeRTOSHooks.h"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 8,
+					"define" : "ARM_MATH_CM7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "CORE_CM7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "DEBUG=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_BLOCKING_MODE=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_BUFFER_SIZE=4096"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_PROFILER_DRIVER=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_STDIO_DRIVER=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "PROFILER_STM32H7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "STM32H757XI"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "SYSPROGS_PROFILER_DEBUGGER_CHECK_MODE=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "USE_FREERTOS_IF_FOUND"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "flash_layout"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/."
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Core/Include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Device/ST/STM32H7xx/Include"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					10
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2
+			]
+		},
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g3 -O0 -DDEBUG"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mcpu=cortex-m7"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mthumb"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mfpu=fpv5-d16"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-mfloat-abi=hard"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-ffunction-sections"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-fdata-sections"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-include"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/ProfilerFreeRTOSHooks.h"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 8,
+					"define" : "ARM_MATH_CM7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "CORE_CM7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "DEBUG=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_BLOCKING_MODE=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_BUFFER_SIZE=4096"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_PROFILER_DRIVER=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "FAST_SEMIHOSTING_STDIO_DRIVER=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "PROFILER_STM32H7"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "STM32H757XI"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "SYSPROGS_PROFILER_DEBUGGER_CHECK_MODE=1"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "USE_FREERTOS_IF_FOUND"
+				},
+				{
+					"backtrace" : 8,
+					"define" : "flash_layout"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/."
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Core/Include"
+				},
+				{
+					"backtrace" : 8,
+					"path" : "C:/Projects/Riverdi_7Inch/CM7_STM32H757/../../../Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/CMSIS_HAL/Device/ST/STM32H7xx/Include"
+				}
+			],
+			"language" : "C",
+			"sourceIndexes" : 
+			[
+				9
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 8,
+			"id" : "BSP::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "BSP_EFP_Profiler::@6890427a1f51a3e7e1df",
+	"name" : "BSP_EFP_Profiler",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				9
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				3,
+				4,
+				5,
+				6,
+				7,
+				8
+			]
+		},
+		{
+			"name" : "Object Libraries",
+			"sourceIndexes" : 
+			[
+				10
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/FastSemihosting.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/InstrumentingProfiler.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 0,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/TestResourceManager.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/SysprogsProfiler.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/SmallNumberCoder.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/SysprogsProfilerInterface.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/ProfilerFreeRTOSHooks.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/CustomRealTimeWatches.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/DebuggerChecker.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 7,
+			"compileGroupIndex" : 1,
+			"path" : "C:/Users/45201/AppData/Local/VisualGDB/EmbeddedEFPs/Profiler/ProfilerRTOS_FreeRTOS.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 8,
+			"isGenerated" : true,
+			"path" : "build/VisualGDB/Debug/CMakeFiles/BSP.dir/C_/Users/45201/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32H7xxxx/StartupFiles/startup_stm32h757xx.c.obj",
+			"sourceGroupIndex" : 2
+		}
+	],
+	"type" : "OBJECT_LIBRARY"
+}

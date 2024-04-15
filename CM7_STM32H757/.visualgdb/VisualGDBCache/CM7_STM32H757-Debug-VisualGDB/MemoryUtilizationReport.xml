@@ -3,23 +3,38 @@
   <Memories>
     <MemoryUtilization>
       <MemoryName>FLASH</MemoryName>
-      <Used>21924</Used>
+      <Used>47792</Used>
       <Total>1048576</Total>
     </MemoryUtilization>
     <MemoryUtilization>
       <MemoryName>DTCMRAM</MemoryName>
-      <Used>792</Used>
+      <Used>131056</Used>
       <Total>131072</Total>
     </MemoryUtilization>
     <MemoryUtilization>
       <MemoryName>ITCMRAM</MemoryName>
-      <Used>200</Used>
+      <Used>152</Used>
       <Total>65536</Total>
     </MemoryUtilization>
     <MemoryUtilization>
       <MemoryName>RAM_D1</MemoryName>
-      <Used>0</Used>
+      <Used>480000</Used>
       <Total>524288</Total>
+    </MemoryUtilization>
+    <MemoryUtilization>
+      <MemoryName>SHARED</MemoryName>
+      <Used>0</Used>
+      <Total>65535</Total>
+    </MemoryUtilization>
+    <MemoryUtilization>
+      <MemoryName>BKPSRAM</MemoryName>
+      <Used>0</Used>
+      <Total>4095</Total>
+    </MemoryUtilization>
+    <MemoryUtilization>
+      <MemoryName>SDRAM</MemoryName>
+      <Used>8388608</Used>
+      <Total>8388608</Total>
     </MemoryUtilization>
   </Memories>
 </MemoryUtilizationReport>
