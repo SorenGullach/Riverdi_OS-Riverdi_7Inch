@@ -24,12 +24,21 @@
 *This file handles the setup of the Riverdi 7" STM32 display
 */
 
-#include <DSI.h>
-#include <LTDC.h>
-#include <Timers.h>
-#include <TFT_Setup.h>
+#include "DSI.h"
+#include "LTDC.h"
+#include "MemoryDefs.h"
+#include "Timers.h"
+#include "TFT_Setup.h"
+#include "glTypes.h"
 
-class TFTDisplay
+class TFTDisplayEvents
+{
+public:
+	static void Blanking()
+	{
+	}
+};
+class TFTDisplay: public hwLTDC
 {
 public:
 	TFTDisplay()
@@ -45,12 +54,11 @@ public:
 		TimBackLight.Mode(1, Timer::eMode::PWM1); // set CCR1 to PWM1
 		TimBackLight.Compare(1, 200); // set CCR1 to xxx
 		
-		LCD_DSI.Init();
-		LCD_LTDC.Init();
+		hwLTDC::Init();
 
 		TimBackLight.Start();
 	}
-	
+
 	void Intencity(uint16_t value)
 	{
 		if (value == 0)
@@ -62,81 +70,34 @@ public:
 		TimBackLight.Start();
 	}
 
-	// A constant background color (RGB888) can programmed.
-	// It is used for blending with the bottom layer.
-	void BackgroundColor(uint8_t r, uint8_t g, uint8_t b)
-	{
-		LCD_LTDC.BackgroundColor(r, g, b);
-	}
-	// The blending is always active and the two layers can be blended following the blending factors
-	void BlendingFactors(R_t<uint8_t, 1, 2> layer, eBlendingFactor1 BF1, eBlendingFactor2 BF2, uint8_t constantAlpha)
-	{
-		LCD_LTDC.BlendingFactors((uint8_t)layer, BF1, BF2, constantAlpha);
-	}
-	// Every layer can have a default color in the format ARGB which is used outside the defined
-	// layer window or when a layer is disabled.
-	void DefaultColor(R_t<uint8_t, 1, 2> layer, uint8_t r, uint8_t g, uint8_t b, uint8_t alpha)
-	{
-		LCD_LTDC.DefaultColor((uint8_t)layer, r, g, b, alpha);
-	}
-	// A color key (RGB) can be configured to be representative for a transparent pixel.
-	void ColorKey(R_t<uint8_t, 1, 2> layer, uint8_t r, uint8_t g, uint8_t b)
-	{
-		LCD_LTDC.ColorKey((uint8_t)layer, r, g, b);
-	}
-	
-	void Layer(R_t<uint8_t, 1, 2> layer, void *pRGBData, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1)
-	{
-		LCD_LTDC.Layer(layer, pRGBData, x0, y0, x1, y1);
-	}
-	
-	// Define a structure to represent colors in ARGB format
-	struct ARGB_t
-	{
-		uint8_t B, G, R, A;
-	}__PACKED; 
-	static_assert(sizeof(ARGB_t) == 4, "Wrong size");
-
-#define M_PI 3.1415
-	ARGB_t rainbowColorGradient(float value) 
-	{
-		ARGB_t rgb;
-		rgb.R = sin(value) * 127 + 128;
-		rgb.G = sin(value + 2 * M_PI / 3) * 127 + 128;
-		rgb.B = sin(value + 4 * M_PI / 3) * 127 + 128;
-		rgb.A = 255;
-
-		return rgb;
-	}
-
-	void UnitTest()
+	void UnitTest(int testLevel)
 	{
 		Printf("UnitTest of Display\n");
 		for (int i = 0; i < 5; i++)
 		{
-			LCD_DSI.UnitTest(true);
+			hwDSI::UnitTest(true);
 			osDelay(1000); // Delay for 1 second
 		}
-		LCD_DSI.UnitTest(false); // Turn off display test and enable LTDC
+		hwDSI::UnitTest(false); // Turn off display test and enable LTDC
 		
-		Layer(1, NULL, 0, 0, LCD_LTDC.Width(), LCD_LTDC.Height());
-		Layer(2, NULL, 0, 0, LCD_LTDC.Width(), LCD_LTDC.Height());
+		Layer(1, NULL, 0, 0, hwLTDC::Width(), hwLTDC::Height());
+		Layer(2, NULL, 0, 0, hwLTDC::Width(), hwLTDC::Height());
 		
 		for (uint16_t i = 0; i < 1; i++)
 		{
 			for (uint16_t r = 0; r <= 255; r++)
 			{
-				LCD_LTDC.BackgroundColor(r, 0, 0);
+				hwLTDC::BackgroundColor(r, 0, 0);
 				osDelay(10);
 			}
 			for (uint16_t g = 0; g <= 255; g++)
 			{
-				LCD_LTDC.BackgroundColor(0, g, 0);
+				hwLTDC::BackgroundColor(0, g, 0);
 				osDelay(10);
 			}
 			for (uint16_t b = 0; b <= 255; b++)
 			{
-				LCD_LTDC.BackgroundColor(0, 0, b);
+				hwLTDC::BackgroundColor(0, 0, b);
 				osDelay(10);
 			}
 		}
@@ -144,12 +105,15 @@ public:
 		for (uint16_t x = 0; x <= 255; x++)
 		{
 			float value = x * (2 * M_PI / 256); // Calculate the color value
-			ARGB_t t = rainbowColorGradient(value);
-			LCD_LTDC.BackgroundColor(t.R, t.G, t.B);
+			glColor_t t = RainbowColorGradient(value);
+			hwLTDC::BackgroundColor(t.R, t.G, t.B);
 			osDelay(50);
 		}
 		osDelay(1000);
-		LCD_LTDC.BackgroundColor(125, 125, 125);
+		hwLTDC::BackgroundColor(125, 125, 125);
+		
+		if (testLevel > 2)
+			UnitTest1();
 		
 		Printf("UnitTest of Display end \n");
 	}
@@ -159,28 +123,37 @@ public:
 		Printf("UnitTest1 of Display\n");
 
 		// Define the number of lines for the display
-		uint32_t Height1 = LCD_LTDC.Height(); // layer 1 size
-		uint32_t Width1 = LCD_LTDC.Width();
-		const uint32_t Height2 = 200; // layer 2 size
-		const uint32_t Width2 = 600;
+		uint32_t Height1 = hwLTDC::Height(); // layer 1 size
+		uint32_t Width1 = hwLTDC::Width();
+		const uint32_t Height2 = 100; // layer 2 size
+		uint32_t Width2 = hwLTDC::Width(600);
 		const uint32_t Y2 = (Height1 - Height2) / 2;
 		const uint32_t X2 = (Width1 - Width2) / 2;
 		
-		__RAM_ALIGNED(4) static ARGB_t VM2[Height2*Width2];
+		//__RAM_ALIGNED(4) static glColor_t VM2[200*300+64];
 
-//		uint32_t size = Width1*Height1*sizeof(ARGB_t);
-		ARGB_t *pVM1 = (ARGB_t *)SDRAM_START;
-		ARGB_t *pVM2 = (ARGB_t *)&VM2;
+		uint32_t size = SDRAM_SIZE / 2; // Width2*Height2*sizeof(glColor_t);
+		assert(size > Width1*Height1*sizeof(glColor_t) && "SDRam too small");
+		glColor_t *pVM1 = (glColor_t *)SDRAM_START;
+		glColor_t *pVM2 = (glColor_t *)(SDRAM_START + size);
+//		glColor_t *pVM2 = (glColor_t *)&VM2;
 		
 		Printf(" Display layer 1 x=%d,y=%d,w=%d H=%d Adr=0x%8X\n", 0, 0, Width1, Height1, (uint32_t)pVM1);
 		Printf(" Display layer 2 x=%d,y=%d,w=%d H=%d Adr=0x%8X\n", X2, Y2, Width2, Height2, (uint32_t)pVM2);
 			
+		// back color for background
 		BackgroundColor(255, 0, 0);
-		//		DefaultColor(1, 0, 255, 0, 255);
+
+		// a read band at "X"
+		float value = (500 * 2 * M_PI) / Width2; // Calculate the color value
+		glColor_t t = RainbowColorGradient(value);
+		DefaultColor(2, t.R, t.G, t.B, t.A);
+		
 		Layer(1, pVM1, 0, 0, 0 + Width1, 0 + Height1);
 		Layer(2, pVM2, X2, Y2, X2 + Width2, Y2 + Height2);
-		BlendingFactors(1, eBlendingFactor1::F1_CA, eBlendingFactor2::F2_CA, 200);
-		BlendingFactors(2, eBlendingFactor1::F1_CA, eBlendingFactor2::F2_CA, 200);
+		
+		BlendingFactors(1, eBlendingFactor1::F1_CA, eBlendingFactor2::F2_CA, 100);
+		BlendingFactors(2, eBlendingFactor1::F1_CA, eBlendingFactor2::F2_CA, 100);
 
 #define TDELAY 100
 		// Update pixel data for display
@@ -255,7 +228,7 @@ public:
 		for (uint32_t x = 0; x < Width2; x++)
 		{
 			float value = (x * 2 * M_PI) / Width2; // Calculate the color value
-			ARGB_t t = rainbowColorGradient(value);
+			glColor_t t = RainbowColorGradient(value);
 			for (uint32_t y = 0; y < Height2; y++) 
 			{
 				pVM2[x + y*Width2] = t;
@@ -279,8 +252,5 @@ private:
 		DisplayReset.High();
 		osDelay(2);
 	}
-
-	hwDSI LCD_DSI;
-	hwLTDC LCD_LTDC;
 }
 ;

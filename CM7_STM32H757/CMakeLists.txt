@@ -18,9 +18,9 @@ add_bsp_based_executable(
 	GENERATE_BIN
 	GENERATE_MAP
 	SOURCES
+		Main.cpp
 		../../osSTM32H7xx/SystemInit.h
 		../../osSTM32H7xx/SystemInitCM7.cpp
-		Main.cpp
 		../../osSTM32H7xx/Utils.h
 		../../osSTM32H7xx/RCC.cpp
 		../../osSTM32H7xx/RCC.h
@@ -35,17 +35,22 @@ add_bsp_based_executable(
 		../../osSTM32H7xx/LTDC.cpp
 		../../osSTM32H7xx/DSI.h
 		../../osSTM32H7xx/DSI.cpp
-		TFTDisplay.h
 		../../osSTM32H7xx/Timers.h
 		../../osSTM32H7xx/Timers.cpp
-		TFT_Setup.h
 		../../osSTM32H7xx/FMC.cpp
 		../../osSTM32H7xx/FMC.h
+		TFTDisplay.h
+		TFT_Setup.h
+		../../glSTM32H7xx/glMain.h
+		../../glSTM32H7xx/glTypes.h
+		../../glSTM32H7xx/glMain.cpp
+		../../glSTM32H7xx/glPrimitives.cpp
+		../../glSTM32H7xx/glPrimitives.h
 	LINKER_SCRIPT STM32H757XI_flash.lds)
 
-	target_include_directories(CM7_STM32H757 PRIVATE 
+	target_include_directories(CM7_STM32H757 PRIVATE
 	../../osSTM32H7xx
-	)
+	../../glSTM32H7xx)
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
 target_compile_definitions(CM7_STM32H757 PRIVATE STM32H757xx DEBUG DEBUG_DEFAULT_INTERRUPT_HANDLERS)

@@ -77,8 +77,6 @@ const uint16_t VBP = 23; /*!< Vertical Back Porch   */
 const uint16_t VFP = 12; /*!< Vertical Front Porch   */
 const uint16_t VACT = 600; /*!< Active height */
 
-#ifdef DSI_SETUP
-
 enum class eDSI_PLL_IN
 {
 	DIV1 = 1U,
@@ -155,16 +153,13 @@ const bool LPVerticalFrontPorchEnable = true;
 const bool LPVerticalBackPorchEnable = true;
 const bool LPVerticalSyncActiveEnable = true;
 
-#endif
-
 const bool HSPolarityHigh = false; 
 const bool VSPolarityHigh = false;
 const bool DEPolarityHigh = true;
 const bool PCPolarityInverted = false;
 
-#ifdef LTDC_SETUP
-// LTDC settings
 
+// LTDC settings
 enum class ePixelFormat {
 	
 	ARGB8888 = 0B000U /* ARGB8888 LTDC pixel format */,
@@ -176,22 +171,3 @@ enum class ePixelFormat {
 	AL44     = 0B110U /* AL44 LTDC pixel format */,
 	AL88     = 0B111U  /* AL88 LTDC pixel format */
 };
-
-struct Layer_t
-{
-//	uint16_t WindowX0 = 0;
-//	uint16_t WindowX1 = 1024;
-//	uint16_t WindowY0 = 0;
-//	uint16_t WindowY1 = 600;
-//	uint16_t ImageWidth = 1024;
-//	uint16_t ImageHeight = 600;
-//	ePixelFormat PixelFormat = ePixelFormat::ARGB8888;
-//	uint8_t ConstantAlpha = 255; // used when BFx == Fx_CA
-//	eBlendingFactor BlendingFactor1 = eBlendingFactor1::F1_CA;
-//	eBlendingFactor BlendingFactor2 = eBlendingFactor2::F2_CA;
-//	uint8_t BackColorAlpha = 255; // used when BFx == Fx_PAXCA
-//	uint8_t BackColorRed = 0;	
-//	uint8_t BackColorGreen = 0;
-//	uint8_t BackColorBlue = 0;
-} Layers[2];
-#endif

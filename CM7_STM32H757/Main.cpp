@@ -52,11 +52,23 @@ __RAM_FUNC void ToggleLed()
 ///////////////////////////////////
 hwFMC FMCController;
 
+//#define DISPLAY_TEST
+#define GRAPHIC_TEST
+#ifdef DISPLAY_TEST
 ///////////////////////////////////
 // for the Display
-#include <TFTDisplay.h>
+#include "TFTDisplay.h"
 TFTDisplay Display;
 ///////////////////////////////////
+#endif
+
+#ifdef GRAPHIC_TEST
+///////////////////////////////////
+// for the SGGL
+#include "glMain.h"
+glMain Graphic;
+///////////////////////////////////
+#endif
 
 int main()
 {
@@ -90,19 +102,28 @@ int main()
 	// Initialize FMC
 	FMCController.Init();
 
+#ifdef DISPLAY_TEST
 	// Initialize the display with VM buffer
 	Display.Init();
 	Display.Intencity(400); // Set display intensity
-
+#endif
+	
+#ifdef GRAPHIC_TEST
+	Graphic.Init();
+#endif
+	
 	Printf("HW Init done CM7\n");
-	// test SDRAM
+	// Test SDRAM
 	//FMCController.UnitTest();
+#ifdef DISPLAY_TEST
 	// Test the display
-//	Display.UnitTest();
-	Display.UnitTest1();
-
-//	Display.Layer(1, (void *)FMCController.GetSDRAMAddr());
-//	Display.Layer(2, NULL);
+	Display.UnitTest(3);
+#endif
+	
+#ifdef GRAPHIC_TEST
+	// Test Graphic libary
+	Graphic.UnitTest();
+#endif
 
 #ifdef DUALBOOT
 	// Start CM4 core
