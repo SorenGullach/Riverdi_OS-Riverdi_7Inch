@@ -46,6 +46,8 @@ add_bsp_based_executable(
 		../../glSTM32H7xx/glMain.cpp
 		../../glSTM32H7xx/glPrimitives.cpp
 		../../glSTM32H7xx/glPrimitives.h
+		../../glSTM32H7xx/glGUIButton.h
+		../../glSTM32H7xx/glGUIButton.cpp
 	LINKER_SCRIPT STM32H757XI_flash.lds)
 
 	target_include_directories(CM7_STM32H757 PRIVATE
