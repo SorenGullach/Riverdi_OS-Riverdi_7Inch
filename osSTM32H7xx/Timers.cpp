@@ -17,25 +17,5 @@
  * "Søren Gullach <STM32_R7_OS@toolsbox.dk>"
  */
 
-#pragma once
-
-#include "stm32h7xx.h"
-
-class hwSysTick
-{
-public:
-	static void Init();
-
-	static void Delay(uint32_t Delay_ms);
-#ifdef DEBUG
-	static void UnitTest();
-#else
-	static void UnitTest() {};
-#endif
-	
-	static uint32_t Ticks;
-};
-
-#define osDelay(ms) hwSysTick::Delay(ms)
-#define osTicks_ms hwSysTick::Ticks
+#include <Timers.h>
 

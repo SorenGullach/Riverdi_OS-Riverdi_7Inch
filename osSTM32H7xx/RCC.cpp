@@ -1,3 +1,21 @@
+/*
+ * Copyright 2024 Søren Gullach
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * You must include the following attribution in all copies or substantial portions of the Software:
+ * "Søren Gullach <STM32_R7_OS@toolsbox.dk>"
+ */
 
 #include <RCC.h>
 #include <PWR.h>
@@ -282,6 +300,7 @@ void hwCC::PLLSource(ePLL_SRC src)
 
 void hwCC::SYSClkSource(eSysClkSource src)
 {
+//	Printf("1\n");
 	switch (src)
 	{
 	case eSysClkSource::HSI:
@@ -314,10 +333,13 @@ void hwCC::SYSClkSource(eSysClkSource src)
 		SYS_clk = PLL1.P_clk;
 		break;
 	}
+	Printf("2\n");
 	// adjust C1_clk
 	SCGU.C1Clk();
+	Printf("3\n");
 	// adjust C2_clk
 	SCGU.C2Clk();
+//	Printf("4\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,12 +348,14 @@ template <int Idx>
 	{
 		if (IsEnabled())
 		{
-			Printf("  PLL%d\n", Idx);
-			Printf("  Src_clk %d\n", Src_clk);
-			Printf("  Ref_clk %d\n", Ref_clk);
-			Printf("  P_clk %d\n", P_clk);
-			Printf("  Q_clk %d\n", Q_clk);
-			Printf("  R_clk %d\n", R_clk);
+			Printf("   PLL%d\n", Idx);
+			Printf("   Src_clk %d\n", Src_clk);
+			Printf("   Ref_clk %d\n", Ref_clk);
+			Printf("   P_clk %d\n", P_clk);
+			Printf("   Q_clk %d\n", Q_clk);
+			Printf("   R_clk %d\n", R_clk);
+			if(Idx == 3)
+				Printf("    LTDC clk %d\n", R_clk);
 		}
 	}
 
@@ -370,7 +394,7 @@ template <int Idx>
 			divN = (RCC->PLL2DIVR & RCC_PLL2DIVR_N2_Msk) >> RCC_PLL2DIVR_N2_Pos;
 			divP = (RCC->PLL2DIVR & RCC_PLL2DIVR_P2_Msk) >> RCC_PLL2DIVR_P2_Pos;
 			divQ = (RCC->PLL2DIVR & RCC_PLL2DIVR_Q2_Msk) >> RCC_PLL2DIVR_Q2_Pos;
-			divR = (RCC->PLL3DIVR & RCC_PLL2DIVR_R2_Msk) >> RCC_PLL2DIVR_R2_Pos;
+			divR = (RCC->PLL2DIVR & RCC_PLL2DIVR_R2_Msk) >> RCC_PLL2DIVR_R2_Pos;
 			break;
 		case 3:
 			divM = (RCC->PLLCKSELR & RCC_PLLCKSELR_DIVM3_Msk) >> RCC_PLLCKSELR_DIVM3_Pos;
@@ -381,10 +405,10 @@ template <int Idx>
 			break;
 		}
 		Ref_clk = Src_clk / divM;
-		VCO_clk = Ref_clk * (divN+1);
-		P_clk = VCO_clk / (divP+1);
-		Q_clk = VCO_clk / (divQ+1);
-		R_clk = VCO_clk / (divR+1);
+		VCO_clk = Ref_clk * (divN + 1);
+		P_clk = VCO_clk / (divP + 1);
+		Q_clk = VCO_clk / (divQ + 1);
+		R_clk = VCO_clk / (divR + 1);
 	}
 
 template <int Idx>
@@ -471,23 +495,20 @@ template <int Idx>
 				ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_PLL1RGE_Msk, RCC_PLLCFGR_PLL1RGE_2);
 			else
 				ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_PLL1RGE_Msk, RCC_PLLCFGR_PLL1RGE_3);
-			
+						
 			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_PLL1FRACEN_Msk, 0); // integer mode
 			ModifyReg(RCC->PLL1DIVR, RCC_PLL1DIVR_N1_Msk, (mulNx - 1) << RCC_PLL1DIVR_N1_Pos);
 
 			assert(divPx != 3); // ??
 			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVP1EN, 0); // disable
-			ModifyReg(RCC->PLL1DIVR, RCC_PLL1DIVR_P1_Msk, (divPx - 1) << RCC_PLL1DIVR_P1_Pos);
+			ModifyReg(RCC->PLL1DIVR, 
+				RCC_PLL1DIVR_P1_Msk | 
+				RCC_PLL1DIVR_Q1_Msk |
+				RCC_PLL1DIVR_R1_Msk,
+				(divPx - 1) << RCC_PLL1DIVR_P1_Pos |
+				(divQx - 1) << RCC_PLL1DIVR_Q1_Pos |
+				(divRx - 1) << RCC_PLL1DIVR_R1_Pos);
 			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVP1EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVQ1EN, 0); // disable
-			ModifyReg(RCC->PLL1DIVR, RCC_PLL1DIVR_Q1_Msk, (divQx - 1) << RCC_PLL1DIVR_Q1_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVQ1EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVR1EN, 0); // disable
-			ModifyReg(RCC->PLL1DIVR, RCC_PLL1DIVR_R1_Msk, (divRx - 1) << RCC_PLL1DIVR_R1_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVR1EN); // enable
-
 			break;
 		case 2:
 			if (Ref_clk > 2'000'000)
@@ -509,15 +530,13 @@ template <int Idx>
 			ModifyReg(RCC->PLL2DIVR, RCC_PLL2DIVR_N2_Msk, (mulNx - 1) << RCC_PLL2DIVR_N2_Pos);
 
 			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVP2EN, 0); // disable
-			ModifyReg(RCC->PLL2DIVR, RCC_PLL2DIVR_P2_Msk, (divPx - 1) << RCC_PLL2DIVR_P2_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVP2EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVQ2EN, 0); // disable
-			ModifyReg(RCC->PLL2DIVR, RCC_PLL2DIVR_Q2_Msk, (divQx - 1) << RCC_PLL2DIVR_Q2_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVQ2EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVR2EN, 0); // disable
-			ModifyReg(RCC->PLL2DIVR, RCC_PLL2DIVR_R2_Msk, (divRx - 1) << RCC_PLL2DIVR_R2_Pos);
+			ModifyReg(RCC->PLL2DIVR, 
+				RCC_PLL2DIVR_P2_Msk | 
+				RCC_PLL2DIVR_Q2_Msk |
+				RCC_PLL2DIVR_R2_Msk,
+				(divPx - 1) << RCC_PLL2DIVR_P2_Pos |
+				(divQx - 1) << RCC_PLL2DIVR_Q2_Pos |
+				(divRx - 1) << RCC_PLL2DIVR_R2_Pos);
 			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVR2EN); // enable
 
 			break;
@@ -542,17 +561,14 @@ template <int Idx>
 			ModifyReg(RCC->PLL3DIVR, RCC_PLL3DIVR_N3_Msk, (mulNx - 1) << RCC_PLL3DIVR_N3_Pos);
 
 			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVP3EN, 0); // disable
-			ModifyReg(RCC->PLL3DIVR, RCC_PLL3DIVR_P3_Msk, (divPx - 1) << RCC_PLL3DIVR_P3_Pos);
+			ModifyReg(RCC->PLL3DIVR, 
+				RCC_PLL3DIVR_P3_Msk | 
+				RCC_PLL3DIVR_Q3_Msk |
+				RCC_PLL3DIVR_R3_Msk,
+				(divPx - 1) << RCC_PLL3DIVR_P3_Pos |
+				(divQx - 1) << RCC_PLL3DIVR_Q3_Pos |
+				(divRx - 1) << RCC_PLL3DIVR_R3_Pos);
 			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVP3EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVQ3EN, 0); // disable
-			ModifyReg(RCC->PLL3DIVR, RCC_PLL3DIVR_Q3_Msk, (divQx - 1) << RCC_PLL3DIVR_Q3_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVQ3EN); // enable
-
-			ModifyReg(RCC->PLLCFGR, RCC_PLLCFGR_DIVR3EN, 0); // disable
-			ModifyReg(RCC->PLL3DIVR, RCC_PLL3DIVR_R3_Msk, (divRx - 1) << RCC_PLL3DIVR_R3_Pos);
-			ModifyReg(RCC->PLLCFGR, 0, RCC_PLLCFGR_DIVR3EN); // enable
-
 			break;
 		}
 		Enable();
@@ -565,7 +581,9 @@ void hwCC::hwSCGU::DumpClocks()
 	Printf("  C1_clk %d\n", C1_clk);
 	Printf("  C2_clk %d\n", C2_clk);
 	Printf("  P1_clk %d\n", P1_clk);
+	Printf("     P1T_clk %d\n", P1T_clk);
 	Printf("  P2_clk %d\n", P2_clk);
+	Printf("     P2T_clk %d\n", P2T_clk);
 	Printf("  P3_clk %d\n", P3_clk);
 	Printf("  P4_clk %d\n", P4_clk);
 }
@@ -639,67 +657,63 @@ void hwCC::hwSCGU::ClockUpdate()
 	default:
 		P3_clk = C2_clk;
 		break;
-	case RCC_D1CFGR_HPRE_DIV2:
+	case RCC_D1CFGR_D1PPRE_DIV2:
 		P3_clk = C2_clk / 2;
 		break;
-	case RCC_D1CFGR_HPRE_DIV4:
+	case RCC_D1CFGR_D1PPRE_DIV4:
 		P3_clk = C2_clk / 4;
 		break;
-	case RCC_D1CFGR_HPRE_DIV8:
+	case RCC_D1CFGR_D1PPRE_DIV8:
 		P3_clk = C2_clk / 8;
 		break;
-	case RCC_D1CFGR_HPRE_DIV16:
+	case RCC_D1CFGR_D1PPRE_DIV16:
 		P3_clk = C2_clk / 16;
-		break;
-	case RCC_D1CFGR_HPRE_DIV64:
-		P3_clk = C2_clk / 64;
-		break;
-	case RCC_D1CFGR_HPRE_DIV128:
-		P3_clk = C2_clk / 128;
-		break;
-	case RCC_D1CFGR_HPRE_DIV256:
-		P3_clk = C2_clk / 256;
-		break;
-	case RCC_D1CFGR_HPRE_DIV512:
-		P3_clk = C2_clk / 512;
 		break;
 	}
 
 	switch (RCC->D2CFGR & RCC_D2CFGR_D2PPRE2_Msk)
 	{
 	default:
-		P2_clk = C2_clk;
+		P2T_clk = P2_clk = C2_clk;
 		break;
 	case RCC_D2CFGR_D2PPRE2_DIV2:
 		P2_clk = C2_clk / 2;
+		P2T_clk = C2_clk;
 		break;
 	case RCC_D2CFGR_D2PPRE2_DIV4:
 		P2_clk = C2_clk / 4;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk : C2_clk / 2;
 		break;
 	case RCC_D2CFGR_D2PPRE2_DIV8:
 		P2_clk = C2_clk / 8;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 2 : C2_clk / 4;
 		break;
 	case RCC_D2CFGR_D2PPRE2_DIV16:
 		P2_clk = C2_clk / 16;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 4 : C2_clk / 8;
 		break;
 	}
 	
 	switch (RCC->D2CFGR & RCC_D2CFGR_D2PPRE1_Msk)
 	{
 	default:
-		P1_clk = C2_clk;
+		P1T_clk = P1_clk = C2_clk;
 		break;
 	case RCC_D2CFGR_D2PPRE1_DIV2:
 		P1_clk = C2_clk / 2;
+		P1T_clk = C2_clk;
 		break;
 	case RCC_D2CFGR_D2PPRE1_DIV4:
 		P1_clk = C2_clk / 4;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk : C2_clk / 2;
 		break;
 	case RCC_D2CFGR_D2PPRE1_DIV8:
 		P1_clk = C2_clk / 8;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 2 : C2_clk / 4;
 		break;
 	case RCC_D2CFGR_D2PPRE1_DIV16:
 		P1_clk = C2_clk / 16;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 4 : C2_clk / 8;
 		break;
 	}
 
@@ -790,6 +804,19 @@ void hwCC::hwSCGU::C2Clk(uint32_t freq)
 	// calc HPRE
 	uint16_t d = C1_clk / 240'000'000; 
 	if ((C1_clk % 240'000'000) > 0) d++;
+/*
+//	Printf("3 1\n");
+	// adjust wait states
+	uint32_t ACR = FLASH->ACR;
+//	Printf("3 1 1\n");
+	ModifyReg(ACR, FLASH_ACR_LATENCY_Msk, FLASH_ACR_LATENCY_7WS);
+	ModifyReg(ACR, FLASH_ACR_WRHIGHFREQ_Msk, 0B11 << FLASH_ACR_WRHIGHFREQ_Pos);
+//	Printf("3 1 2\n");
+	FLASH->ACR = ACR;
+//	Printf("3 1 3\n");
+	while (FLASH->ACR != ACR) __asm(""); 
+//	Printf("3 2\n");
+*/	
 	if (d <= 1)
 	{
 		ModifyReg(RCC->D1CFGR, RCC_D1CFGR_HPRE_Msk, RCC_D1CFGR_HPRE_DIV1);
@@ -838,60 +865,81 @@ void hwCC::hwSCGU::C2Clk(uint32_t freq)
 	else
 		assert(false);
 	assert(C2_clk <= 240'000'000 && "C2 too big");
+/*
+//	Printf("3 3\n");
+	// adjust wait states
+	ACR = FLASH->ACR;
+	ModifyReg(ACR, FLASH_ACR_LATENCY_Msk, FLASH_ACR_LATENCY_7WS);
+	ModifyReg(ACR, FLASH_ACR_WRHIGHFREQ_Msk, 0B11 << FLASH_ACR_WRHIGHFREQ_Pos);
+	FLASH->ACR = ACR;
+	while (FLASH->ACR != ACR) __asm(""); 
+//	Printf("3 4\n");
+*/
 }
 
-void hwCC::hwSCGU::P1Clk(ePDivisor p3Divisor)
+void hwCC::hwSCGU::P1Clk(ePDivisor p3Divisor, bool setTimerBit)
 {
+	ModifyReg(RCC->CFGR, RCC_CFGR_TIMPRE_Msk, setTimerBit ? RCC_CFGR_TIMPRE : 0);
 	switch (p3Divisor)
 	{
 	case ePDivisor::P_1:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1_Msk, RCC_D2CFGR_D2PPRE1_DIV1);
-		P1_clk = C2_clk;
+		P1T_clk = P1_clk = C2_clk;
 		break;
 	case ePDivisor::P_2:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1_Msk, RCC_D2CFGR_D2PPRE1_DIV2);
 		P1_clk = C2_clk / 2;
+		P1T_clk = C2_clk;
 		break;
 	case ePDivisor::P_4:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1_Msk, RCC_D2CFGR_D2PPRE1_DIV4);
 		P1_clk = C2_clk / 4;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk : C2_clk / 2;
 		break;
 	case ePDivisor::P_8:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1_Msk, RCC_D2CFGR_D2PPRE1_DIV8);
 		P1_clk = C2_clk / 8;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 2 : C2_clk / 4;
 		break;
 	case ePDivisor::P_16:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE1_Msk, RCC_D2CFGR_D2PPRE1_DIV16);
 		P1_clk = C2_clk / 16;
+		P1T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 4 : C2_clk / 8;
 		break;
 	}
 }
 
-void hwCC::hwSCGU::P2Clk(ePDivisor p3Divisor)
+void hwCC::hwSCGU::P2Clk(ePDivisor p3Divisor, bool HRTIMSEL)
 {
+	ModifyReg(RCC->CFGR, RCC_CFGR_HRTIMSEL_Msk, HRTIMSEL ? RCC_CFGR_HRTIMSEL : 0);
 	switch (p3Divisor)
 	{
 	case ePDivisor::P_1:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2_Msk, RCC_D2CFGR_D2PPRE2_DIV1);
-		P2_clk = C2_clk;
+		P2T_clk = P2_clk = C2_clk;
 		break;
 	case ePDivisor::P_2:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2_Msk, RCC_D2CFGR_D2PPRE2_DIV2);
 		P2_clk = C2_clk / 2;
+		P2T_clk = C2_clk;
 		break;
 	case ePDivisor::P_4:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2_Msk, RCC_D2CFGR_D2PPRE2_DIV4);
 		P2_clk = C2_clk / 4;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk : C2_clk / 2;
 		break;
 	case ePDivisor::P_8:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2_Msk, RCC_D2CFGR_D2PPRE2_DIV8);
 		P2_clk = C2_clk / 8;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 2 : C2_clk / 4;
 		break;
 	case ePDivisor::P_16:
 		ModifyReg(RCC->D2CFGR, RCC_D2CFGR_D2PPRE2_Msk, RCC_D2CFGR_D2PPRE2_DIV16);
 		P2_clk = C2_clk / 16;
+		P2T_clk = (RCC->CFGR & RCC_CFGR_TIMPRE) != 0 ? C2_clk / 4 : C2_clk / 8;
 		break;
 	}
+	P2HRT_clk = (RCC->CFGR & RCC_CFGR_HRTIMSEL_Msk) != 0 ? C1_clk : P2T_clk;
 }
 
 
@@ -949,7 +997,62 @@ void hwCC::hwSCGU::P4Clk(ePDivisor p3Divisor)
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////////
+void hwSysClock::Reset()
+{
+	/* Set HSION bit */
+	RCC->CR |= RCC_CR_HSION;
 
+	/* Reset CFGR register */
+	RCC->CFGR = 0x00000000;
+
+	/* Reset HSEON, HSECSSON, CSION, HSI48ON, CSIKERON, PLL1ON, PLL2ON and PLL3ON bits */
+	RCC->CR &= 0xEAF6ED7FU;
+
+	/* Decreasing the number of wait states because of lower CPU frequency */
+	if (FLASH_LATENCY_DEFAULT  < (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY)))
+	{
+		/* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
+		MODIFY_REG(FLASH->ACR, FLASH_ACR_LATENCY, (uint32_t)(FLASH_LATENCY_DEFAULT));
+	}
+
+	/* Reset D1CFGR register */
+	RCC->D1CFGR = 0x00000000;
+
+	/* Reset D2CFGR register */
+	RCC->D2CFGR = 0x00000000;
+
+	/* Reset D3CFGR register */
+	RCC->D3CFGR = 0x00000000;
+
+	/* Reset PLLCKSELR register */
+	RCC->PLLCKSELR = 0x02020200;
+
+	/* Reset PLLCFGR register */
+	RCC->PLLCFGR = 0x01FF0000;
+	/* Reset PLL1DIVR register */
+	RCC->PLL1DIVR = 0x01010280;
+	/* Reset PLL1FRACR register */
+	RCC->PLL1FRACR = 0x00000000;
+
+	/* Reset PLL2DIVR register */
+	RCC->PLL2DIVR = 0x01010280;
+
+	/* Reset PLL2FRACR register */
+
+	RCC->PLL2FRACR = 0x00000000;
+	/* Reset PLL3DIVR register */
+	RCC->PLL3DIVR = 0x01010280;
+
+	/* Reset PLL3FRACR register */
+	RCC->PLL3FRACR = 0x00000000;
+
+	/* Reset HSEBYP bit */
+	RCC->CR &= 0xFFFBFFFFU;
+
+	/* Disable all interrupts */
+	RCC->CIER = 0x00000000;
+	}
 ////////////////////////////////////////////////////////////////////////////////////
 #define C1_CLK 480
 //#define C1_CLK 400
@@ -987,7 +1090,23 @@ void hwSysClock::Setup()
 	CC.PLL1.SetupInteger(100, 2, 24, 2); // (4*100)/2 = 200 MHz
 #endif
 	CC.PLL1.Enable();
+	
+	// LTDC clk
+	CC.PLL3.DivM(12); // 16/12 = 1.333MHz source for PLL3
+	CC.PLL3.SetupInteger(246, 6, 6, 6); // (1.333*231)/6 = 51.333 MHz
+	// (1.333*246)/6 = 54,6653 MHz
+	CC.PLL3.Enable();
+
+	// FMC clk
+	CC.PLL2.DivM(4); // 16/4 = 4MHz source for PLL2
+	CC.PLL2.SetupInteger(180, 4, 11, 3); // (4*180)/3 = 240 MHz
+	CC.PLL2.Enable();
+
 	CC.SYSClkSource(hwCC::eSysClkSource::PLL1); // pll P_clk;
+	CC.SCGU.P1Clk(hwCC::hwSCGU::ePDivisor::P_2, false);
+	CC.SCGU.P2Clk(hwCC::hwSCGU::ePDivisor::P_2, false);
+	CC.SCGU.P3Clk(hwCC::hwSCGU::ePDivisor::P_2);
+	CC.SCGU.P4Clk(hwCC::hwSCGU::ePDivisor::P_2);
 	
 	CC.HSI(hwCC::eHSI::Off); // off 
 	CC.CSI(hwCC::eHSE::Off); // off 
@@ -1050,11 +1169,25 @@ uint32_t hwSysClock::APB1Clk()
 	return CC.SCGU.P1_clk;
 }
 
+uint32_t hwSysClock::APB1TClk()
+{
+	if (CC.SYS_clk == 0)
+		SystemCoreClockUpdate(); // to find core clock
+	return CC.SCGU.P1T_clk;
+}
+
 uint32_t hwSysClock::APB2Clk()
 {
 	if (CC.SYS_clk == 0)
 		SystemCoreClockUpdate(); // to find core clock
 	return CC.SCGU.P2_clk;
+}
+
+uint32_t hwSysClock::APB2TClk()
+{
+	if (CC.SYS_clk == 0)
+		SystemCoreClockUpdate(); // to find core clock
+	return CC.SCGU.P2T_clk;
 }
 
 uint32_t hwSysClock::APB3Clk()

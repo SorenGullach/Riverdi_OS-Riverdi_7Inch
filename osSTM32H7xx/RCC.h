@@ -1,3 +1,22 @@
+/*
+ * Copyright 2024 Søren Gullach
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * You must include the following attribution in all copies or substantial portions of the Software:
+ * "Søren Gullach <STM32_R7_OS@toolsbox.dk>"
+ */
+
 #pragma once
 
 #include <stm32h7xx.h>
@@ -50,7 +69,6 @@ class hwCC
 
 	uint32_t SYS_clk, LSI_clk, LSE_clk, RTC_clk, HSE_1M_clk, HSE_clk, HSI_clk, CSI_clk, HSI48_clk, PER_clk;
 	
-#pragma region MCO_Outputs
 	// As shown in the Figure 51, the RCC offers 2 clock outputs(MCO1 and MCO2), with a great
 	// flexibility on the clock selection and frequency adjustment.
 	enum class eMCOSEL
@@ -83,9 +101,7 @@ class hwCC
 			return &MCOPin;
 		}
 		*/
-#pragma endregion
 
-#pragma region RCC_clock_block
 	enum class eHSE
 	{
 		Off,
@@ -140,8 +156,6 @@ class hwCC
 	*/
 	void LSI(bool on);
 
-#pragma endregion
-
 	enum class ePLL_SRC
 	{
 		None,
@@ -177,8 +191,7 @@ class hwCC
 			{
 				uint32_t on = (((Idx == 1) * RCC_CR_PLL1ON) | ((Idx == 2) * RCC_CR_PLL2ON) | ((Idx == 3) * RCC_CR_PLL3ON));
 				RCC->CR |= on; // Enable PLL
-				uint32_t ready = (((Idx == 1) * RCC_CR_PLL1RDY) | ((Idx == 2) * RCC_CR_PLL2RDY) | ((Idx == 3) * RCC_CR_PLL3RDY));
-				while ((RCC->CR & ready) == 0) ;
+				while (!IsEnabled()) __asm(""); 
 			}
 
 			/*
@@ -191,15 +204,17 @@ class hwCC
 
 			void SetupInteger(R_t<uint16_t, 4, 512> mulNx, R_t<uint8_t, 1, 128> divPx, R_t<uint8_t, 1, 128> divQx, R_t<uint8_t, 1, 128> divRx);
 			
+		public:
 			uint32_t P_clk, Q_clk, R_clk;
 			uint32_t Src_clk;
 			uint32_t Ref_clk, VCO_clk;
 		};
 	
+public:
 	static PLL <1>PLL1;
 	static PLL <2>PLL2;
 	static PLL <3>PLL3;
-
+private:
 	enum class eSysClkSource
 	{
 		HSI,
@@ -232,12 +247,12 @@ class hwCC
 			P_8,
 			P_16,
 		};
-		void P1Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P2Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P3Clk(ePDivisor pDivisor = ePDivisor::P_1);
-		void P4Clk(ePDivisor pDivisor = ePDivisor::P_1);
+		void P1Clk(ePDivisor pDivisor = ePDivisor::P_2, bool setTimerBit = false);
+		void P2Clk(ePDivisor pDivisor = ePDivisor::P_2, bool HRTIMSEL = false);
+		void P3Clk(ePDivisor pDivisor = ePDivisor::P_2);
+		void P4Clk(ePDivisor pDivisor = ePDivisor::P_2);
 		
-		uint32_t C1_clk, C2_clk, P3_clk, P1_clk, P2_clk, P4_clk;
+		uint32_t C1_clk, C2_clk, P3_clk, P1_clk, P2_clk, P4_clk, P1T_clk, P2T_clk, P2HRT_clk;
 	};
 	
 	static hwSCGU SCGU;
@@ -250,9 +265,9 @@ public:
 	// Dumps the current settings
 	static void DumpClocks()
 	{
-		Printf("UniTest of SysClock start\n");
+		Printf("UnitTest of SysClock start\n");
 		CC.DumpClocks();
-		Printf("UniTest of SysClock end\n");
+		Printf("UnitTest of SysClock end\n");
 	}
 	// Find the clocks
 	static void SystemCoreClockUpdate()
@@ -260,6 +275,8 @@ public:
 		CC.SystemCoreClockUpdate();
 	}
 
+	// reset RCC
+	static void Reset();
 	// Setup clocks
 	static void Setup();
 	
@@ -278,8 +295,10 @@ public:
 	static uint32_t AHB3Clk();
 	// Returns the APB1Clk
 	static uint32_t APB1Clk();
+	static uint32_t APB1TClk();
 	// Returns the APB2Clk
 	static uint32_t APB2Clk();
+	static uint32_t APB2TClk();
 	// Returns the APB3Clk
 	static uint32_t APB3Clk();
 	// Returns the APB4Clk

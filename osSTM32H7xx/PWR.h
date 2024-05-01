@@ -1,8 +1,28 @@
+/*
+ * Copyright 2024 Søren Gullach
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * You must include the following attribution in all copies or substantial portions of the Software:
+ * "Søren Gullach <STM32_R7_OS@toolsbox.dk>"
+ */
+
 #pragma once
 
 #include "stm32h7xx.h"
 #include <assert.h>
 #include <stdio.h>
+#include <Utils.h>
 
 // https://www.st.com/content/ccc/resource/training/technical/product_training/group0/97/f1/9d/3a/c4/c2/4c/ff/STM32H7-System-Power_control_PWR/files/STM32H7-System-Power_control_PWR.pdf/_jcr_content/translations/en.STM32H7-System-Power_control_PWR.pdf
 
@@ -120,41 +140,42 @@ public:
 		{
 		case eVOSs::VOS0:
 			if ((PWR->D3CR & PWR_D3CR_VOS_Msk) != (0x3 << PWR_D3CR_VOS_Pos)) // if not in VOS1
-				VOS(eVOSs::VOS1);
+			VOS(eVOSs::VOS1);
 			if ((PWR->D3CR & PWR_D3CR_VOS_Msk) == (0x3 << PWR_D3CR_VOS_Pos)) // if in VOS1
 			{
 				RCC->APB4ENR |= RCC_APB4ENR_SYSCFGEN; // enable SYSCFG
 				SYSCFG->PWRCR |= SYSCFG_PWRCR_ODEN;
-				while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+				while ((PWR->CSR1 & PWR_CSR1_ACTVOSRDY) == 0) __asm("");
 			}
 			break;
 		case eVOSs::VOS1:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x3 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
 			break;
 		case eVOSs::VOS2:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x2 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
 			break;
 		case eVOSs::VOS3:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
-			ModifyReg(PWR->CR1,PWR_CR1_SVOS_Msk, 0x3 << PWR_CR1_SVOS_Pos);
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
+			ModifyReg(PWR->CR1, PWR_CR1_SVOS_Msk, 0x3 << PWR_CR1_SVOS_Pos);
 			PWR->CR1 &= ~PWR_CR1_LPDS;
 			break;
 		case eVOSs::LP_SVOS3:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
 			ModifyReg(PWR->CR1, PWR_CR1_SVOS_Msk, 0x3 << PWR_CR1_SVOS_Pos);
 			PWR->CR1 |= PWR_CR1_LPDS;
 			break;
 		case eVOSs::LP_SVOS4:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
 			PWR->CR1 = (PWR->CR1 & ~PWR_CR1_SVOS_Msk) | 0x2 << PWR_CR1_SVOS_Pos;
+			break;
 		case eVOSs::LP_SVOS5:
 			ModifyReg(PWR->D3CR, PWR_D3CR_VOS_Msk, 0x1 << PWR_D3CR_VOS_Pos);
-			while (!(PWR->D3CR & PWR_D3CR_VOSRDY)) __asm("");
+			while ((PWR->D3CR & PWR_D3CR_VOSRDY) == 0) __asm("");
 			ModifyReg(PWR->CR1, PWR_CR1_SVOS_Msk, 0x1 << PWR_CR1_SVOS_Pos);
 			break;
 		}

@@ -1,3 +1,21 @@
+/*
+ * Copyright 2024 Søren Gullach
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * You must include the following attribution in all copies or substantial portions of the Software:
+ * "Søren Gullach <STM32_R7_OS@toolsbox.dk>"
+ */
 
 #include <SysTick.h>
 #include <RCC.h>
@@ -30,18 +48,13 @@ void hwSysTick::Init()
 void hwSysTick::Delay(uint32_t Delay_ms)
 {
 	uint32_t tickstart = Ticks;
-	uint32_t wait = Delay_ms;
-
-	while ((Ticks - tickstart) < wait)
-	{
-		__asm("");
-	}
+	while ((Ticks - tickstart) < Delay_ms) __asm("");
 }
 
 #ifdef DEBUG
 void hwSysTick::UnitTest()
 {
-	Printf("UniTest of SysTick start\n");
+	Printf("UnitTest of SysTick start\n");
 	Printf("Testing delay %u MHz\n", hwSysClock::SysTickClk());
 	uint32_t ticks = hwSysTick::Ticks;
 	hwSysTick::Delay(1000);
@@ -53,7 +66,7 @@ void hwSysTick::UnitTest()
 		hwSysTick::Delay(1000);
 		Printf("%d sec delay\n", i);
 	}
-	Printf("UniTest of SysTick end\n");
+	Printf("UnitTest of SysTick end\n");
 }
 #endif
 
